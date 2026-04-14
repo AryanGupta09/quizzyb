@@ -6,6 +6,15 @@ const cors     = require('cors');
 const app  = express();
 const PORT = process.env.PORT || 5000;
 
+if (!process.env.MONGO_URI) {
+  console.error('MONGO_URI is not set. Please add it to environment variables.');
+  process.exit(1);
+}
+if (!process.env.JWT_SECRET) {
+  console.error('JWT_SECRET is not set.');
+  process.exit(1);
+}
+
 const allowedOrigins = process.env.CLIENT_URL
   ? [process.env.CLIENT_URL]
   : ['http://localhost:5173', 'http://localhost:4173'];
