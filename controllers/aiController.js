@@ -62,24 +62,20 @@ exports.getExplanation = async (req, res) => {
     return res.status(400).json({ message: 'Question and correct answer required' });
   }
 
-  const prompt = `A user answered a quiz question incorrectly.
+  const prompt = `You are a quiz explanation assistant. Answer in plain text only, no bullet points, no labels.
 
 Question: "${question}"
 Correct Answer: "${correct_answer}"
-User's Answer: "${user_answer || 'No answer / Skipped'}"
+User's Answer: "${user_answer || 'Skipped'}"
 
-Provide a brief, clear explanation (2-3 sentences max):
-1. Why the correct answer is right
-2. Why the user's answer was wrong (if applicable)
-
-Be concise and educational.`;
+In 2 sentences: explain why "${correct_answer}" is the correct answer. Do NOT mention option letters like A, B, C, D. Do NOT say "the correct answer is c" or similar. Just explain the concept directly.`;
 
   try {
     const completion = await groq.chat.completions.create({
       model: 'llama-3.1-8b-instant',
       messages: [{ role: 'user', content: prompt }],
-      temperature: 0.5,
-      max_tokens: 200,
+      temperature: 0.3,
+      max_tokens: 150,
     });
 
     const explanation = completion.choices[0]?.message?.content?.trim();
